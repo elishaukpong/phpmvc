@@ -1,22 +1,11 @@
 <?php
 
 require 'Task.php';
+require 'function.php';
 
 
-try{
-    $pdo = new PDO('mysql:host=127.0.0.1;dbname=mvc', 'root', '');
-}catch(PDOException $e){
-    die('Could not connect!');
-}
+$pdo = connectToDb();
 
-$statement = $pdo->prepare('select * from task');
-$statement->execute();
-$tasks = $statement->fetchAll(PDO::FETCH_CLASS, 'Task');
-
-// echo "<pre>";
-// var_dump($todos);
-// echo "</pre>";
-
-
+$tasks = fetchAllTasks($pdo);
 
 require 'index.view.php';
