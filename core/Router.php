@@ -1,36 +1,49 @@
 <?php
 
+namespace App\Core;
+
 class Router
 {
-    protected $routes = [
+    protected static $routes = [
         'GET' => [],
         'POST' => []
     ];
 
-    public function get($uri, $controller)
+    public static function get($uri, $controller)
     {
-        $this->routes['GET'][$uri] = $controller;
+        static::$routes['GET'][$uri] = $controller;
     }
 
-    public function post($uri, $controller)
+    public static function post($uri, $controller)
     {
-        $this->routes['POST'][$uri] = $controller;
+        static::$routes['POST'][$uri] = $controller;
     }
 
-    public static function load($file)
+    public static function load()
     {
-        $router = new static;
-        require $file;
-        
-        return $router;
+        require __DIR__ . '/../routes/web.php';
     }
 
-    public function direct($uri, $requestType){
-        if(array_key_exists($uri, $this->routes[$requestType])){
-            return $this->routes[$requestType][$uri];
+    public static function direct($uri, $requestType){
+        static::load();
+        if(array_key_exists($uri, static::$routes[$requestType])){
+            return (new static)->callAction(
+                ...explode('@', static::$routes[$requestType][$uri])
+            );
         }
 
         throw new Exception('No routes defined');
+     }
+
+     
+     public function callAction($controller, $action)
+     {
+         $controller = new $controller;
+
+         if(! method_exists($controller, $action)){
+            throw Exception("{$controller} does not respond to the {$action} action.");
+         }
+         return $controller->$action();
      }
 
      public function routes()

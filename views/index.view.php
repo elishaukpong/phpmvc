@@ -10,4 +10,5 @@
     <input type="text" name="name">
     <input type="submit" value="Submit">
 </form>
+
 <?php require('partials/footer.php') ?>

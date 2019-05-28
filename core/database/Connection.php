@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Core\Database;
+
+
 class Connection
 {
     public static function make(array $config)
